@@ -49,15 +49,23 @@ class Game:
     def draw_hand_skeleton(self):
         found_hands = self.hands.process(self.frame)
         if found_hands.multi_hand_landmarks:
-            for count,hand_landmarks in enumerate(found_hands.multi_hand_landmarks):
+            for hand_landmarks in found_hands.multi_hand_landmarks:
                 # print(hand_landmarks)
-                self.mp_drawing.draw_landmarks(self.frame,hand_landmarks,self.mphands.HAND_CONNECTIONS)
-                hand_landmarks = found_hands.multi_hand_landmarks[count]
+                self.mp_drawing.draw_landmarks(self.frame,hand_landmarks,self.mphands.HAND_CONNECTIONS) #draws the hand skeleton of all hands viewable
+                hand_landmarks = found_hands.multi_hand_landmarks[0] #selects the first hand
                 thumbtip = hand_landmarks.landmark[4]
                 indextip = hand_landmarks.landmark[8]
-                # dis = self.find_distance(thumbtip,indextip)
-                # print(thumbtip.x * self.w,thumbtip.y * self.h)
-                self.points.append((int(indextip.x*self.w),int(indextip.y*self.h)))
+                middletip = hand_landmarks.landmark[12]
+                ringip = hand_landmarks.landmark[16]
+                pinkietip = hand_landmarks.landmark[20]
+                finger_distance = self.find_distance(indextip,middletip)
+                print(finger_distance)
+                # print(thumbtip.x * self.w,thumbtip.y * self.h) #have to multiply the initial (x,y) coords by the window shape width and height to get proper coordinates if not the coords are on a 0-1 scale 
+                
+                if finger_distance < 0.1: #if two fingers are close together then can start drawing 
+                    self.points.append((int(indextip.x*self.w),int(indextip.y*self.h))) #adds localtion of index finger (x,y) coords to a list to draw circles later giving the effect of a pencil
+
+
         return found_hands
 
     def loop(self):
