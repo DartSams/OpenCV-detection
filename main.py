@@ -14,7 +14,7 @@ class Game:
         self.camera = camera
         self.haarcascade_path = haarcascade_path
         # self.face_cascade = cv.CascadeClassifier('facial recognition\haarcascades\haarcascade_finger.xml')
-        self.face_cascade = cv.CascadeClassifier(r'personal haarcascades\haarcascade_find_panda.xml')
+        self.face_cascade = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.points = []
         self.mphands = mp.solutions.hands
         self.hands = self.mphands.Hands(max_num_hands=1)
