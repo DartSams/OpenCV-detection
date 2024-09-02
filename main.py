@@ -7,10 +7,9 @@ import mediapipe as mp #opensource machine learning library of detected datasets
 camera = cv.VideoCapture(0) #gets the device default camera
 
 class Game:
-    def __init__(self,camera,haarcascade_path=""):
+    def __init__(self,camera):
         self.camera = camera
-        self.haarcascade_path = haarcascade_path
-        # self.face_cascade = cv.CascadeClassifier('facial recognition\haarcascades\haarcascade_finger.xml')
+        # self.face_cascade = cv.CascadeClassifier('facial recognition\haarcascades\haarcascade_finger.xml') #for custom haarcascades
         self.face_cascade = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.points = []
         self.mphands = mp.solutions.hands
@@ -112,3 +111,10 @@ class Game:
 
 x = Game(camera)
 x.loop()
+
+
+###Useful links
+#https://www.youtube.com/watch?v=Ye-lTW68pZc&t=1s
+#https://www.youtube.com/watch?v=NZde8Xt78Iw
+#https://www.youtube.com/watch?v=dZ4itBvIjVY
+#https://chromewebstore.google.com/detail/download-all-images/ifipmflagepipjokmbdecpmjbibjnakm?hl=en
