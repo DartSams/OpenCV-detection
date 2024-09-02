@@ -6,9 +6,6 @@ import mediapipe as mp #opensource machine learning library of detected datasets
 
 camera = cv.VideoCapture(0) #gets the device default camera
 
-# face_cascade = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-
 class Game:
     def __init__(self,camera,haarcascade_path=""):
         self.camera = camera
@@ -30,13 +27,13 @@ class Game:
                 self.face_center_x,self.face_center_y = int(x+w/2),int(y+h/2)
                 # print(int(face_center_x),int(face_center_y))
                 self.points.append((int(self.face_center_x),int(self.face_center_y)))
-                cv.circle(frame,(self.face_center_x,self.face_center_y),10,(0,0,255),-1) #draw a circle at the face center point
+                # cv.circle(frame,(self.face_center_x,self.face_center_y),10,(0,0,255),-1) #draw a circle at the face center point
 
 
     def draw_circle(self,frame,pos,thickness,color):
         return cv.circle(frame,pos,thickness,color,-1)
     
-    def find_distance(self,obj1_pos,obj2_pos):
+    def find_distance(self,obj1_pos,obj2_pos): #distance formula sqrt((x2-x1)**2+(y2-y1)**2)
         try:
             dist = pygame.math.Vector2(obj1_pos[0],obj1_pos[1]).distance_to((obj2_pos[0],obj2_pos[1]))
         except:
@@ -54,16 +51,21 @@ class Game:
     def draw_hand_skeleton(self):
         found_hands = self.hands.process(self.frame)
         if found_hands.multi_hand_landmarks:
-            for count,hand_landmarks in enumerate(found_hands.multi_hand_landmarks):
+            for hand_landmarks in found_hands.multi_hand_landmarks:
                 # print(hand_landmarks)
-                self.mp_drawing.draw_landmarks(self.frame,hand_landmarks,self.mphands.HAND_CONNECTIONS)
-                hand_landmarks = found_hands.multi_hand_landmarks[count]
+                self.mp_drawing.draw_landmarks(self.frame,hand_landmarks,self.mphands.HAND_CONNECTIONS) #draws the hand skeleton of all hands viewable
+                hand_landmarks = found_hands.multi_hand_landmarks[0] #selects the first hand
                 thumbtip = hand_landmarks.landmark[4]
                 indextip = hand_landmarks.landmark[8]
-                # x = self.find_distance(thumbtip,indextip)
-                # print(thumbtip.x * self.w,thumbtip.y * self.h)
-                self.points.append((int(indextip.x*self.w),int(indextip.y*self.h)))
-                # self.draw_circle(self.frame,(int(thumbtip.x),int(thumbtip.y)),5,(255,0,255))
+                middletip = hand_landmarks.landmark[12]
+                ringip = hand_landmarks.landmark[16]
+                pinkietip = hand_landmarks.landmark[20]
+                finger_distance = self.find_distance(indextip,middletip)
+                print(finger_distance)
+                # print(thumbtip.x * self.w,thumbtip.y * self.h) #have to multiply the initial (x,y) coords by the window shape width and height to get proper coordinates if not the coords are on a 0-1 scale 
+                
+                if finger_distance < 0.1: #if two fingers are close together then can start drawing 
+                    self.points.append((int(indextip.x*self.w),int(indextip.y*self.h))) #adds localtion of index finger (x,y) coords to a list to draw circles later giving the effect of a pencil
 
 
             # hand_landmarks = found_hands.multi_hand_landmarks[0]
@@ -89,13 +91,10 @@ class Game:
             # print(self.find_distance([x1,y1],[self.face_center_x,self.face_center_y]))
             # self.draw_contours(self.gray)
             for p in self.points:
-                cv.circle(self.gray,(p[0],p[1]),10,(0,0,255),-1) #draw a circle at the face center point
-
-    
+                cv.circle(self.gray,(p[0],p[1]),10,(0,0,255),-1) #draw a circle from a list of coords (x,y)
 
             self.draw_hand_skeleton()
             
-
             try:
                 cv.imshow('Gray Window',self.gray)
                 cv.imshow('Window',self.frame)
