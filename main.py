@@ -59,11 +59,18 @@ class Game:
                 ringip = hand_landmarks.landmark[16]
                 pinkietip = hand_landmarks.landmark[20]
                 finger_distance = self.find_distance(indextip,middletip)
-                print(finger_distance)
+                # print(finger_distance)
                 # print(thumbtip.x * self.w,thumbtip.y * self.h) #have to multiply the initial (x,y) coords by the window shape width and height to get proper coordinates if not the coords are on a 0-1 scale 
                 
-                if finger_distance < 0.1: #if two fingers are close together then can start drawing 
-                    self.points.append((int(indextip.x*self.w),int(indextip.y*self.h))) #adds localtion of index finger (x,y) coords to a list to draw circles later giving the effect of a pencil
+                pos = (int(indextip.x * self.w), int(indextip.y * self.h))
+
+                if finger_distance > 0.19 and self.drawing_mode: #if only holding up 1 finger while the others are down 
+                    self.points.append(pos) #adds localtion of index finger (x,y) coords to a list to draw circles later giving the effect of a pencil
+
+                if finger_distance < 0.1: #logic to erase drawing points
+                    cv.circle(self.frame2,pos,self.eraser_size,(255,255,255),1) #displays a visual effect to show user is erasing points
+                    self.points = [p for p in self.points if self.find_distance(p, pos) > self.eraser_size] #only keeps the pencil drawings from the list if they are greater than the eraser size
+
 
 
         return found_hands
@@ -79,10 +86,27 @@ class Game:
             self.draw_hand_skeleton()
             
             try:
-                cv.imshow('Gray Window',self.gray)
+                #flip the frame (easier to visually understand)
+                self.frame = cv.flip(self.frame,1)
+                self.frame2 = cv.flip(self.frame2,1)
+
+
+                cv.imshow('Gray Window',self.frame2)
                 cv.imshow('Window',self.frame)
                 if cv.waitKey(1)==ord('q'):
                     break
+
+                if cv.waitKey(1)==ord('1'):
+                    print("clearing all")
+                    self.points.clear()
+
+                if cv.waitKey(1)==ord('2'): 
+                    print("you can now draw")
+                    self.drawing_mode = True
+
+                if cv.waitKey(1)==ord('3'): 
+                    print("disabling drawing mode")
+                    self.drawing_mode = False
             
             except:
                 print('Camera error')
