@@ -21,3 +21,7 @@ Click start to train.
 Step 5.
 After training is finished in the image folder it will have created a classifier folder in that is the cascade.xml this file is what is useful for identifying objects in opencv.
 
+
+# Future Features
+- having a character navigate a air drawn maze
+- item measurement scanning
