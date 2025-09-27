@@ -25,3 +25,4 @@ After training is finished in the image folder it will have created a classifier
 # Future Features
 - having a character navigate a air drawn maze
 - item measurement scanning
+- laptop controls (fingers control mouse)

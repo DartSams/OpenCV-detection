@@ -1,0 +1,10 @@
+*.h
+*.pyd
+*.pyc
+*.typed
+*.txt
+*.pyi
+.dll
+
+/Lib/
+/drawenv/

@@ -4,7 +4,7 @@ import random
 import pygame
 import mediapipe as mp #opensource machine learning library of detected datasets
 
-camera = cv.VideoCapture(0) #gets the device default camera
+camera = cv.VideoCapture(1) #gets the device default camera
 
 class Game:
     def __init__(self,camera):
